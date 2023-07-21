@@ -1,5 +1,4 @@
 #include <iostream>
-#include <sstream>
 #include "Display.h"
 
 using namespace std;
@@ -50,4 +49,9 @@ void Display::writeLine(string line, int row, int align) {
 			setChar(line[len - i], row, SCREEN_WIDTH - i);
 		}
 	}
+};
+
+void Display::writeCursor(char letter) {
+	setChar(letter, 0, cursorX);
+	cursorX++;
 };

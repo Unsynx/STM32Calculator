@@ -9,6 +9,7 @@ private:
 	static string const BORDER;
 
 	char screen[2][16] = {};
+	int cursorX = 0;
 
 public:
 	static int const ALIGN_RIGHT = 1;
@@ -19,5 +20,6 @@ public:
 	void clearDisplay();
 	void updateDisplay();
 	void writeLine(string line, int row, int align);
+	void writeCursor(char letter);
 	void setChar(char letter, int row, int column);
 };
