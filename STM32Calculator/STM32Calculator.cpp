@@ -2,10 +2,13 @@
 //
 
 #include <iostream>
+#include "Display.h"
 
 using namespace std;
 
 int main()
 {
-    std::cout << "Hello World!" << endl;
+    Display display;
+    display.writeLine("Hello. world!", 0, Display::ALIGN_LEFT);
+    display.updateDisplay();
 }
