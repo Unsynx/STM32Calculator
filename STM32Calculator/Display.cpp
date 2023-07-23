@@ -53,8 +53,24 @@ void Display::writeLine(string line, int row, int align) {
 	}
 };
 
+void Display::shiftRow(int row, int direction) {
+	if (direction == Display::LEFT) {
+		for (int i = 0; i < Display::SCREEN_WIDTH; i++) {
+			setChar(screen[row][i+1], row, i);
+		}
+	} else if (direction == Display::RIGHT) {
+		// Not something I need
+	}
+}
+
 // Writes to a specific row but moves 
-void Display::writeCursor(char letter) {
-	setChar(letter, 0, cursorX);
-	cursorX++;
+void Display::writeCursor(char letter, bool shiftDisplayWhenFull) {
+	if (cursorX == SCREEN_WIDTH && shiftDisplayWhenFull) {
+		shiftRow(0, Display::LEFT);
+		setChar(letter, 0, SCREEN_WIDTH - 1);
+	}
+	else {
+		setChar(letter, 0, cursorX);
+		cursorX++;
+	}
 };

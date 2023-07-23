@@ -14,12 +14,15 @@ private:
 public:
 	static int const ALIGN_RIGHT = 1;
 	static int const ALIGN_LEFT = -1;
+	static int const RIGHT = 1;
+	static int const LEFT = -1;
 
 public:
 	Display() { clearDisplay(); };
 	void clearDisplay();
 	void updateDisplay();
+	void shiftRow(int row, int direction);
 	void writeLine(string line, int row, int align);
-	void writeCursor(char letter);
+	void writeCursor(char letter, bool shiftDisplayWhenFull);
 	void setChar(char letter, int row, int column);
 };
