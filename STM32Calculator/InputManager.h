@@ -29,6 +29,7 @@ private:
 	bool isCommand(char input);
 	void shiftNumbers(float startValue, int start, int end);
 	void shiftCommands(char startValue, int start, int end);
+	float operands(int i, char command);
 	void printArray(); // for debug
 
 public:

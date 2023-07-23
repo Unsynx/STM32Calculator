@@ -24,7 +24,7 @@ int main()
     
     // Main loop
     do {
-        system("cls");                      // clears screen
+        //system("cls");                      // clears screen
         display.updateDisplay();            // Pushes all updates from display class to console
 
         input = inputManager.getInput();    // Waits until input is received

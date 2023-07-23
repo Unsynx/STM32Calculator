@@ -72,6 +72,20 @@ void InputManager::printArray() {
     cout << endl;
 }
 
+float InputManager::operands(int i, char command) {
+    switch (command)
+    {
+    case (MULTIPLICATION_COMMAND):
+        return numbers[i] * numbers[i + 1];
+    case (DIVISION_COMMAND):
+        return numbers[i] / numbers[i + 1];
+    case (ADDITION_COMMAND):
+        return numbers[i] + numbers[i + 1];
+    case (SUBTRACTION_COMMAND):
+        return numbers[i] - numbers[i + 1];
+    }
+}
+
 
 float InputManager::solveEquation() {
     // Check for parenthesis
@@ -79,41 +93,30 @@ float InputManager::solveEquation() {
 
     // Multiplication and division
     printArray();
-    for (int i = 0; i < commandCount - 1; i++) {
-        if (commandList[i] == MULTIPLICATION_COMMAND) {
-            shiftNumbers(numbers[i] * numbers[i + 1], i, commandCount);
-            shiftCommands(commandList[i+1], i, commandCount);
+    for (int i = 0; i < commandCount; i++) {
+        if (commandList[i] == MULTIPLICATION_COMMAND || commandList[i] == DIVISION_COMMAND) {
+            shiftNumbers(operands(i, commandList[i]), i, commandCount);
+            shiftCommands(commandList[i + 1], i, commandCount);
             commandCount--;
             i--;
-            //printArray();
-            //cout << "i: " << i << ", commandCount: " << commandCount << endl;
-        } else if (commandList[i] == DIVISION_COMMAND) {
-            shiftNumbers(numbers[i] / numbers[i + 1], i, commandCount);
-            shiftCommands(commandList[i+1], i, commandCount);
-            commandCount--;
-            i--;
-            //printArray();
-            //cout << "i: " << i << ", commandCount: " << commandCount << endl;
+
+            // Debug
+            printArray();
+            cout << "i: " << i << ", commandCount: " << commandCount << endl;
         }
     }
 
     // Addition and subtraction
-    for (int i = 0; i < commandCount - 1; i++) {
-        if (commandList[i] == SUBTRACTION_COMMAND) {
-            shiftNumbers(numbers[i] - numbers[i + 1], i, commandCount);
+    for (int i = 0; i < commandCount; i++) {
+        if (commandList[i] == ADDITION_COMMAND || commandList[i] == SUBTRACTION_COMMAND) {
+            shiftNumbers(operands(i, commandList[i]), i, commandCount);
             shiftCommands(commandList[i + 1], i, commandCount);
             commandCount--;
             i--;
-            //printArray();
-            //cout << "i: " << i << ", commandCount: " << commandCount << endl;
-        }
-        else if (commandList[i] == ADDITION_COMMAND) {
-            shiftNumbers(numbers[i] + numbers[i + 1], i, commandCount);
-            shiftCommands(commandList[i + 1], i, commandCount);
-            commandCount--;
-            i--;
-            //printArray();
-            //cout << "i: " << i << ", commandCount: " << commandCount << endl;
+
+            // Debug
+            printArray();
+            cout << "i: " << i << ", commandCount: " << commandCount << endl;
         }
     }
 
