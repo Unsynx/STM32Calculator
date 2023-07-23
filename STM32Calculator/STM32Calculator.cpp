@@ -20,16 +20,19 @@ int main()
     input = inputManager.getInput();
     display.clearDisplay();
     display.writeCursor(input);     // May have to change this
+    inputManager.saveInput(input);
     
     // Main loop
     do {
-        system("cls");                      // clears screen
+        //system("cls");                      // clears screen
         display.updateDisplay();            // Pushes all updates from display class to console
 
         input = inputManager.getInput();    // Waits until input is received
         inputManager.saveInput(input);      // Saves input to input buffer
 
         if (input == InputManager::EQUALS_COMMAND) {
+            inputManager.solveEquation();
+
             stringstream ss;
             ss << "=" << inputManager.getAnswer();
             

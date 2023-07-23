@@ -15,6 +15,14 @@ void InputManager::printCommands() {
     cout << EXIT_COMMAND << "\tExit." << endl << endl;
 }
 
+bool InputManager::isNumber(char input) {
+    if (input != '.' && (int)input <= 48 && (int)input >= 57) {   // Checks if input is a number or a decimal point
+        cout << "Command" << endl;
+        return true;
+    }
+    return false;
+}
+
 void InputManager::saveNumber() {
     // Convert saved chars to an int
     stringstream ss;
@@ -27,44 +35,17 @@ void InputManager::saveNumber() {
     numbers[commandCount] = num;
     commandCount++;
 
-    inputBufferIndex = 0;
+    inputBufferIndex = 0;       
 }
 
 void InputManager::saveInput(char input) {
-    // Adds input to buffer
+    // Adds input to buffer.
     inputBuffer[inputBufferIndex] = input;
     inputBufferIndex++;
 
-    // Adds command and number to their respective lists
-    switch (input) {
-    case (ADDITION_COMMAND):
-        commandList[commandCount] = ADDITION_COMMAND;
-        saveNumber();
-        break;
-
-    case (SUBTRACTION_COMMAND):
-        commandList[commandCount] = SUBTRACTION_COMMAND;
-        saveNumber();
-        break;
-
-    case (MULTIPLICATION_COMMAND):
-        commandList[commandCount] = MULTIPLICATION_COMMAND;
-        saveNumber();
-        break;
-
-    case (DIVISION_COMMAND):
-        commandList[commandCount] = DIVISION_COMMAND;
-        saveNumber();
-        break;
-
-    case (EQUALS_COMMAND):      // Solves equation and resets input buffers.
-        commandList[commandCount] = EQUALS_COMMAND;
-        saveNumber();
-        commandCount = 0;
-        break;
-
-    default:
-        break;
+    if (!isNumber(input)) {                     // If input is a command
+        commandList[commandCount] = input;      // Save command to commmand list
+        saveNumber();                           // And save numbers to number list, reset input buffer
     }
 }
 

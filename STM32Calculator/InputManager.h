@@ -26,10 +26,11 @@ public:
 private:
 	void printCommands();
 	void saveNumber();
-	void solveEquation();
+	bool isNumber(char input);
 
 public:
 	InputManager() {};
+	void solveEquation();
 	char getInput();	// With STM32, this will manage the button matrix
 	void saveInput(char input);
 	float getAnswer() { return answer; }
