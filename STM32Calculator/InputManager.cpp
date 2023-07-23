@@ -87,17 +87,37 @@ float InputManager::operands(int i, char command) {
 }
 
 
-float InputManager::solveEquation() {
+float InputManager::solveEquation(int start = 0, int end = 100) {
     // Check for parenthesis
     // Make sure this can identify both nested and sequential occurences.
+    int chunkStart = 0;
+    int chunkOffset = 0;
+    for (int i = 0; i < commandCount; i++) {
+        if (commandList[i] == PARENTHESIS_START) {
+            chunkStart = i;
+            chunkOffset++;
+        }
+        if (commandList[i] == PARENTHESIS_START) {
+            if (chunkOffset == 0) {
+                throw invalid_argument("Unpaired Parenthesis");
+            }
+            chunkOffset--;
+            if (chunkOffset == 0) {
+                float value;
+                value = solveEquation(chunkStart, i);
+                // Compress this chunk into a single number
+            }
+        }
+    }
 
     // Multiplication and division
     printArray();
-    for (int i = 0; i < commandCount; i++) {
+    for (int i = start; i < commandCount || i < end; i++) {     // not sure about  || i < end
         if (commandList[i] == MULTIPLICATION_COMMAND || commandList[i] == DIVISION_COMMAND) {
             shiftNumbers(operands(i, commandList[i]), i, commandCount);
             shiftCommands(commandList[i + 1], i, commandCount);
             commandCount--;
+            end--;      // not sure
             i--;
 
             // Debug
@@ -107,11 +127,12 @@ float InputManager::solveEquation() {
     }
 
     // Addition and subtraction
-    for (int i = 0; i < commandCount; i++) {
+    for (int i = 0; i < commandCount || i < end; i++) {
         if (commandList[i] == ADDITION_COMMAND || commandList[i] == SUBTRACTION_COMMAND) {
             shiftNumbers(operands(i, commandList[i]), i, commandCount);
             shiftCommands(commandList[i + 1], i, commandCount);
             commandCount--;
+            end--;
             i--;
 
             // Debug

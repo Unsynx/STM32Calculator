@@ -22,6 +22,8 @@ public:
 	static char const DIVISION_COMMAND = '/';
 	static char const EQUALS_COMMAND = '=';
 	static char const EXIT_COMMAND = 'e';
+	static char const PARENTHESIS_START = '(';
+	static char const PARENTHESIS_END = ')';
 
 private:
 	void printCommands();
@@ -34,7 +36,7 @@ private:
 
 public:
 	InputManager() {};
-	float solveEquation();
+	float solveEquation(int start = 0, int end = 100);
 	char getInput();	// With STM32, this will manage the button matrix
 	void saveInput(char input);
 	float getAnswer() { return answer; }
