@@ -26,6 +26,7 @@ void Display::updateDisplay() {
 	cout << BORDER << endl;
 };
 
+// Sets a specific display cell to a char
 void Display::setChar(char letter, int row, int column) {
 	if (row > SCREEN_HEIGHT - 1 || row < 0) {
 		throw invalid_argument("Outside display range");
@@ -37,6 +38,7 @@ void Display::setChar(char letter, int row, int column) {
 	screen[row][column] = letter;
 };
 
+// Write a string to a specific display row. With alignment.
 void Display::writeLine(string line, int row, int align) {
 	int len = line.length();
 	if (align == ALIGN_LEFT) {
@@ -51,6 +53,7 @@ void Display::writeLine(string line, int row, int align) {
 	}
 };
 
+// Writes to a specific row but moves 
 void Display::writeCursor(char letter) {
 	setChar(letter, 0, cursorX);
 	cursorX++;

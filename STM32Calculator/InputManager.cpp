@@ -30,32 +30,7 @@ void InputManager::saveNumber() {
     inputBufferIndex = 0;
 }
 
-void InputManager::solveEquation() {
-    float runningValue = numbers[0];
-
-    for (int i = 0; i < commandCount - 1; i++) {
-        if (commandList[i] == SUBTRACTION_COMMAND) {
-            runningValue -= numbers[i + 1];
-        } else if (commandList[i] == ADDITION_COMMAND) {
-            runningValue += numbers[i + 1];
-        }
-    }
-
-    answer = runningValue;
-}
-
-char InputManager::getInput() {
-    InputManager::printCommands();
-
-    cout << "Enter a command: " << flush;
-
-    // With STM32, this will manage the button matrix
-    char input;
-    cin >> input;
-    // Only read first char https://stackoverflow.com/questions/5131647/why-would-we-call-cin-clear-and-cin-ignore-after-reading-input
-    cin.ignore(numeric_limits<std::streamsize>::max(), '\n');   
-    cout << endl;
-
+void InputManager::saveInput(char input) {
     // Adds input to buffer
     inputBuffer[inputBufferIndex] = input;
     inputBufferIndex++;
@@ -83,14 +58,41 @@ char InputManager::getInput() {
         break;
 
     case (EQUALS_COMMAND):      // Solves equation and resets input buffers.
+        commandList[commandCount] = EQUALS_COMMAND;
         saveNumber();
-        solveEquation();
         commandCount = 0;
         break;
 
     default:
         break;
     }
+}
+
+void InputManager::solveEquation() {
+    float runningValue = numbers[0];
+
+    for (int i = 0; i < commandCount - 1; i++) {
+        if (commandList[i] == SUBTRACTION_COMMAND) {
+            runningValue -= numbers[i + 1];
+        } else if (commandList[i] == ADDITION_COMMAND) {
+            runningValue += numbers[i + 1];
+        }
+    }
+
+    answer = runningValue;
+}
+
+char InputManager::getInput() {
+    InputManager::printCommands();
+
+    cout << "Enter a command: " << flush;
+
+    // With STM32, this will manage the button matrix
+    char input;
+    cin >> input;
+    // Only read first char https://stackoverflow.com/questions/5131647/why-would-we-call-cin-clear-and-cin-ignore-after-reading-input
+    cin.ignore(numeric_limits<std::streamsize>::max(), '\n');   
+    cout << endl;
 
     return input;
 }

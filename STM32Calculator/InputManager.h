@@ -9,7 +9,7 @@ private:
 	char inputBuffer[100] = {};		//  List of all the numbers you input
 	int inputBufferIndex = 0;		//  How many places are filled
 
-	float numbers[100] = {};			//  Inputed numbers turned from chars to ints
+	float numbers[100] = {};		//  Inputed numbers turned from chars to ints
 	char commandList[100] = {};		//  List of commands in the order applied
 	int commandCount = 0;			//  How many numbers are filled
 
@@ -31,5 +31,6 @@ private:
 public:
 	InputManager() {};
 	char getInput();	// With STM32, this will manage the button matrix
+	void saveInput(char input);
 	float getAnswer() { return answer; }
 };

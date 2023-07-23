@@ -23,15 +23,19 @@ int main()
     
     // Main loop
     do {
-        system("cls");  // clears screen
-        display.updateDisplay();
+        system("cls");                      // clears screen
+        display.updateDisplay();            // Pushes all updates from display class to console
 
-        input = inputManager.getInput();
+        input = inputManager.getInput();    // Waits until input is received
+        inputManager.saveInput(input);      // Saves input to input buffer
+
         if (input == InputManager::EQUALS_COMMAND) {
             stringstream ss;
             ss << "=" << inputManager.getAnswer();
+            
             string ans;
             ss >> ans;
+
             display.writeLine(ans, 1, Display::ALIGN_RIGHT);
         }
         else {
