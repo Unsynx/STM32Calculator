@@ -15,12 +15,14 @@ void InputManager::printCommands() {
     cout << EXIT_COMMAND << "\tExit." << endl << endl;
 }
 
-bool InputManager::isNumber(char input) {
-    if (input != '.' && (int)input <= 48 && (int)input >= 57) {   // Checks if input is a number or a decimal point
-        cout << "Command" << endl;
-        return true;
+bool InputManager::isCommand(char input) {
+    if (input == '.') {                             // Checks if input is a decimal point
+        return false;
     }
-    return false;
+    if ((int)input >= 48 && (int)input <= 57) {     // Checks if input is a number
+        return false;
+    }
+    return true;
 }
 
 void InputManager::saveNumber() {
@@ -43,7 +45,7 @@ void InputManager::saveInput(char input) {
     inputBuffer[inputBufferIndex] = input;
     inputBufferIndex++;
 
-    if (!isNumber(input)) {                     // If input is a command
+    if (isCommand(input)) {                     // If input is a command
         commandList[commandCount] = input;      // Save command to commmand list
         saveNumber();                           // And save numbers to number list, reset input buffer
     }
@@ -53,6 +55,7 @@ void InputManager::solveEquation() {
     float runningValue = numbers[0];
 
     for (int i = 0; i < commandCount - 1; i++) {
+        cout << numbers[i] << commandList[i] << flush;
         if (commandList[i] == SUBTRACTION_COMMAND) {
             runningValue -= numbers[i + 1];
         } else if (commandList[i] == ADDITION_COMMAND) {

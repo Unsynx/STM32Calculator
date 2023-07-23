@@ -26,7 +26,7 @@ public:
 private:
 	void printCommands();
 	void saveNumber();
-	bool isNumber(char input);
+	bool isCommand(char input);
 
 public:
 	InputManager() {};
