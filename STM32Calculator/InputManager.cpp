@@ -51,19 +51,74 @@ void InputManager::saveInput(char input) {
     }
 }
 
-void InputManager::solveEquation() {
-    float runningValue = numbers[0];
+void InputManager::shiftNumbers(float startValue, int start, int end) {
+    for (int i = start; i < end; i++) {
+        numbers[start + i] = numbers[start + i + 1];
+    }
+    numbers[start] = startValue;
+};
 
-    for (int i = 0; i < commandCount - 1; i++) {
+void InputManager::shiftCommands(char startValue, int start, int end) {
+    for (int i = start; i < end; i++) {
+        commandList[start + i] = commandList[start + i + 1];
+    }
+    commandList[start] = startValue;
+};
+
+void InputManager::printArray() {
+    for (int i = 0; i < 5; i++) {
         cout << numbers[i] << commandList[i] << flush;
-        if (commandList[i] == SUBTRACTION_COMMAND) {
-            runningValue -= numbers[i + 1];
-        } else if (commandList[i] == ADDITION_COMMAND) {
-            runningValue += numbers[i + 1];
+    }
+    cout << endl;
+}
+
+
+float InputManager::solveEquation() {
+    // Check for parenthesis
+    // Make sure this can identify both nested and sequential occurences.
+
+    // Multiplication and division
+    printArray();
+    for (int i = 0; i < commandCount - 1; i++) {
+        if (commandList[i] == MULTIPLICATION_COMMAND) {
+            shiftNumbers(numbers[i] * numbers[i + 1], i, commandCount);
+            shiftCommands(commandList[i+1], i, commandCount);
+            commandCount--;
+            i--;
+            //printArray();
+            //cout << "i: " << i << ", commandCount: " << commandCount << endl;
+        } else if (commandList[i] == DIVISION_COMMAND) {
+            shiftNumbers(numbers[i] / numbers[i + 1], i, commandCount);
+            shiftCommands(commandList[i+1], i, commandCount);
+            commandCount--;
+            i--;
+            //printArray();
+            //cout << "i: " << i << ", commandCount: " << commandCount << endl;
         }
     }
 
-    answer = runningValue;
+    // Addition and subtraction
+    for (int i = 0; i < commandCount - 1; i++) {
+        if (commandList[i] == SUBTRACTION_COMMAND) {
+            shiftNumbers(numbers[i] - numbers[i + 1], i, commandCount);
+            shiftCommands(commandList[i + 1], i, commandCount);
+            commandCount--;
+            i--;
+            //printArray();
+            //cout << "i: " << i << ", commandCount: " << commandCount << endl;
+        }
+        else if (commandList[i] == ADDITION_COMMAND) {
+            shiftNumbers(numbers[i] + numbers[i + 1], i, commandCount);
+            shiftCommands(commandList[i + 1], i, commandCount);
+            commandCount--;
+            i--;
+            //printArray();
+            //cout << "i: " << i << ", commandCount: " << commandCount << endl;
+        }
+    }
+
+    answer = numbers[0];
+    return answer;
 }
 
 char InputManager::getInput() {
@@ -74,9 +129,7 @@ char InputManager::getInput() {
     // With STM32, this will manage the button matrix
     char input;
     cin >> input;
-    // Only read first char https://stackoverflow.com/questions/5131647/why-would-we-call-cin-clear-and-cin-ignore-after-reading-input
-    cin.ignore(numeric_limits<std::streamsize>::max(), '\n');   
-    cout << endl;
+    cin.ignore(numeric_limits<std::streamsize>::max(), '\n');   // Only read first char https://stackoverflow.com/questions/5131647/why-would-we-call-cin-clear-and-cin-ignore-after-reading-input
 
     return input;
 }

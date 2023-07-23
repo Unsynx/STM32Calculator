@@ -27,10 +27,13 @@ private:
 	void printCommands();
 	void saveNumber();
 	bool isCommand(char input);
+	void shiftNumbers(float startValue, int start, int end);
+	void shiftCommands(char startValue, int start, int end);
+	void printArray(); // for debug
 
 public:
 	InputManager() {};
-	void solveEquation();
+	float solveEquation();
 	char getInput();	// With STM32, this will manage the button matrix
 	void saveInput(char input);
 	float getAnswer() { return answer; }
