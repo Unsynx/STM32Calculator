@@ -16,18 +16,15 @@ int main()
 
     // Intro screen
     display.writeLine("Hello. world!", 0, Display::ALIGN_LEFT);
-    display.updateDisplay();
-    input = inputManager.getInput();
-    display.clearDisplay();
-    display.writeCursor(input, true);     // May have to change this
-    inputManager.saveInput(input);
+
+    bool clearDisplay = true;
     
     // Main loop
-    bool clearDisplay = false;
     do {
         //system("cls");                      // clears screen
         display.updateDisplay();            // Pushes all updates from display class to console
 
+        // Clears display after 
         if (clearDisplay) {
             display.clearDisplay();
             clearDisplay = false;

@@ -1,5 +1,6 @@
 # include <iostream>
 #include <sstream>
+#include <cmath>
 #include "InputManager.h"
 
 using namespace std;
@@ -65,8 +66,8 @@ void InputManager::shiftCommands(char startValue, int start, int end) {
     commandList[start] = startValue;
 };
 
-void InputManager::printArray() {
-    for (int i = 0; i < 5; i++) {
+void InputManager::printArray(int start, int end) {
+    for (int i = start; i < end; i++) {
         cout << numbers[i] << commandList[i] << flush;
     }
     cout << endl;
@@ -83,67 +84,115 @@ float InputManager::operands(int i, char command) {
         return numbers[i] + numbers[i + 1];
     case (SUBTRACTION_COMMAND):
         return numbers[i] - numbers[i + 1];
+    case (POWER_COMMAND):
+        return pow(numbers[i], numbers[i + 1]);
     }
 }
 
 
-float InputManager::solveEquation(int start, int end) {
+float InputManager::solveEquation(int start, int end, bool initialCall) {
+    if (initialCall) {
+        end = commandCount;
+    }
+    else {
+        // Pass in smaller array without numbers
+        cout << "recuse started" << endl;
+    }
+
+    cout << endl;
+    printArray(start, end);
+    cout << "Start value: " << start << ", End value: " << end << endl;
+         
     // Check for parenthesis
     // Make sure this can identify both nested and sequential occurences.
     int chunkStart = 0;
     int chunkOffset = 0;
-    for (int i = 0; i < commandCount; i++) {
+    for (int i = start; i <= end; i++) {
         if (commandList[i] == PARENTHESIS_START) {
-            chunkStart = i;
+            // Saves index of first parenthesis
+            if (chunkOffset == 0) {
+                chunkStart = i;
+            }
+
             chunkOffset++;
         }
+
+        // This will also run when there is just a floating end parenthesis
         if (commandList[i] == PARENTHESIS_END) {
-            if (chunkOffset == 0) {     // Since 0 is the deafult, this only runs when an end is found first
-                throw invalid_argument("Unpaired Parenthesis");
-            }
             chunkOffset--;
+
             if (chunkOffset == 0) {
                 float value;
-                value = solveEquation(chunkStart, i);
-                // Compress this chunk into a single number
+                value = solveEquation(chunkStart + 1, i + 1, false);
+                cout << "Recursion returned: " << value << endl;
+                    
+                cout << endl;
+                cout << "Cleanup, chunkstart: " << chunkStart << endl;
+                printArray(start, end);
+
+                // todo: make cleanup work
+                shiftNumbers(value, chunkStart, i + 1);
+                shiftCommands(commandList[chunkStart+1], chunkStart, i + 1);
+                printArray(start, end);
+                shiftNumbers(value, chunkStart, i + 1);
+                shiftCommands(commandList[chunkStart+1], chunkStart, i + 1);
+                printArray(start, end);
+
+                // This changes the array, so the following recursions get confused
             }
+        }
+
+        cout << "ChunkOffset: " << chunkOffset << endl;
+
+    }
+
+    cout << endl;
+    cout << "Finished recursions" << endl;
+    cout << "Start value: " << start << ", End value: " << end << endl;
+    printArray(start, end);
+
+    // Power
+    for (int i = start; i < end; i++) {     // not sure about  || i < end
+        if (commandList[i] == POWER_COMMAND) {
+            shiftNumbers(operands(i, commandList[i]), i, end);
+            shiftCommands(commandList[i + 1], i, end);
+            end--;      // not sure
+            i--;
+
+            printArray(start, end);
         }
     }
 
     // Multiplication and division
-    printArray();
-    for (int i = start; i < commandCount || i < end; i++) {     // not sure about  || i < end
+    for (int i = start; i < end; i++) {     // not sure about  || i < end
         if (commandList[i] == MULTIPLICATION_COMMAND || commandList[i] == DIVISION_COMMAND) {
-            shiftNumbers(operands(i, commandList[i]), i, commandCount);
-            shiftCommands(commandList[i + 1], i, commandCount);
-            commandCount--;
+            shiftNumbers(operands(i, commandList[i]), i, end);
+            shiftCommands(commandList[i + 1], i, end);
             end--;      // not sure
             i--;
 
-            // Debug
-            printArray();
-            cout << "i: " << i << ", commandCount: " << commandCount << endl;
+            printArray(start, end);
         }
     }
 
     // Addition and subtraction
-    for (int i = 0; i < commandCount || i < end; i++) {
+    for (int i = start; i < end; i++) {
         if (commandList[i] == ADDITION_COMMAND || commandList[i] == SUBTRACTION_COMMAND) {
-            shiftNumbers(operands(i, commandList[i]), i, commandCount);
-            shiftCommands(commandList[i + 1], i, commandCount);
-            commandCount--;
+            shiftNumbers(operands(i, commandList[i]), i, end);
+            shiftCommands(commandList[i + 1], i, end);
             end--;
             i--;
 
-            // Debug
-            printArray();
-            cout << "i: " << i << ", commandCount: " << commandCount << endl;
+            printArray(start, end);
         }
     }
 
+    // Resets InputManager for next series of inputs
     commandCount = 0;
     inputBufferIndex = 0;
-    answer = numbers[0];
+
+    answer = numbers[start];
+    cout << answer << endl;
     return answer;
 }
 
@@ -155,7 +204,6 @@ char InputManager::getInput() {
     // With STM32, this will manage the button matrix
     char input;
     cin >> input;
-    //cin.ignore(numeric_limits<std::streamsize>::max(), '\n');   // Only read first char https://stackoverflow.com/questions/5131647/why-would-we-call-cin-clear-and-cin-ignore-after-reading-input
 
     return input;
 }

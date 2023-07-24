@@ -20,10 +20,12 @@ public:
 	static char const SUBTRACTION_COMMAND = '-';
 	static char const MULTIPLICATION_COMMAND = '*';
 	static char const DIVISION_COMMAND = '/';
+	static char const POWER_COMMAND = '^';
 	static char const EQUALS_COMMAND = '=';
-	static char const EXIT_COMMAND = 'e';
 	static char const PARENTHESIS_START = '(';
 	static char const PARENTHESIS_END = ')';
+
+	static char const EXIT_COMMAND = 'e';  // for testing only
 
 private:
 	void printCommands();
@@ -32,11 +34,11 @@ private:
 	void shiftNumbers(float startValue, int start, int end);
 	void shiftCommands(char startValue, int start, int end);
 	float operands(int i, char command);
-	void printArray(); // for debug
+	void printArray(int start = 0, int end = 5); // for debug
 
 public:
 	InputManager() {};
-	float solveEquation(int start = 0, int end = 100);
+	float solveEquation(int start = 0, int end = 0, bool initialCall = true);
 	char getInput();	// With STM32, this will manage the button matrix
 	void saveInput(char input);
 	float getAnswer() { return answer; }
