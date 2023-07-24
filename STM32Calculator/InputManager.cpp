@@ -53,14 +53,14 @@ void InputManager::saveInput(char input) {
 }
 
 void InputManager::shiftNumbers(float startValue, int start, int end) {
-    for (int i = start; i < end; i++) {
+    for (int i = 0; i < end - start; i++) {
         numbers[start + i] = numbers[start + i + 1];
     }
     numbers[start] = startValue;
 };
 
 void InputManager::shiftCommands(char startValue, int start, int end) {
-    for (int i = start; i < end; i++) {
+    for (int i = 0; i < end - start; i++) {
         commandList[start + i] = commandList[start + i + 1];
     }
     commandList[start] = startValue;
@@ -77,21 +77,59 @@ void InputManager::printArray(int start, int end) {
     cout << endl;
 }
 
-float InputManager::operands(int i, char command) {
+float InputManager::operands(char command, float a, float b) {
     switch (command)
     {
     case (MULTIPLICATION_COMMAND):
-        return numbers[i] * numbers[i + 1];
+        return a * b;
     case (DIVISION_COMMAND):
-        return numbers[i] / numbers[i + 1];
+        return a / b;
     case (ADDITION_COMMAND):
-        return numbers[i] + numbers[i + 1];
+        return a + b;
     case (SUBTRACTION_COMMAND):
-        return numbers[i] - numbers[i + 1];
+        return a - b;
     case (POWER_COMMAND):
-        return pow(numbers[i], numbers[i + 1]);
+        return pow(a, b);
+    default:
+        return 0.0;
     }
 }
+
+
+//  5+9+(11-5+7-9)=
+void InputManager::mathLoop(char* commands, int* start, int* end, int operCount) {
+    const int rangeEnd = *end;
+    for (int i = *start; i < *end; i++) {
+        bool matchingCommand = false;
+
+        for (int j = 0; j < operCount; j++) {
+            if (commandList[i] == commands[j]) {
+                matchingCommand = true;
+            }
+        }
+
+        if (matchingCommand) {
+            cout << endl << "command: " << commandList[i] << endl;  // Debug
+
+            float value = operands(commandList[i], numbers[i], numbers[i+1]);
+            cout << "computed value: " << value << endl;
+            cout << "Before shift:" << endl;
+
+            printArray(0, 10);
+            cout << endl;
+            shiftNumbers(value, *start, rangeEnd);
+            shiftCommands(commandList[i + 1], *start, rangeEnd);
+
+            (*end)--;
+            i--;
+
+            cout << "After shift:" << endl;
+            printArray(0, 10);  // Debug
+            cout << endl;
+        }
+    }
+};
+
 
 
 float InputManager::solveEquation(int start, int end, bool initialCall) {
@@ -112,66 +150,66 @@ float InputManager::solveEquation(int start, int end, bool initialCall) {
     int startParenthesisCount = 0;
     for (int i = start; i < end; i++) {
         if (commandList[i] == PARENTHESIS_START) {
+
             if (groupStart == -1) {
                 groupStart = i;
             }
+
             startParenthesisCount++;
             cout << "Parenthesis start found at i: " << i << endl;
         }
         if (commandList[i] == PARENTHESIS_END) {
+
             cout << "Parenthesis end found at i: " << i << endl;
             startParenthesisCount--;
+
             if (startParenthesisCount == 0) {
                 // Plus one
-                solveEquation(groupStart + 1, i + 1, false);
+                int chunkLength = i - groupStart;
+                float value = solveEquation(groupStart + 1, i + 1, false);
+
+                // Clear stuff, and then shift over the rest of it
+                // remove parenthesis
+                cout << "Before format" << endl;
+                printArray();
+
+                for (int j = 0; j < chunkLength; j++) {
+                    shiftNumbers(value, groupStart, i + 1);
+                    shiftCommands(commandList[groupStart + 1], groupStart, i + 1);
+                }
+
+                cout << "After format" << endl;
+                printArray();
             }
         }
     }
 
-
+    /*
     // Debug
     cout << "End" << endl << endl;
     commandCount = 0;
     inputBufferIndex = 0;
     return 0;
+    */
 
     cout << endl << "Calculations for " << start - 1 << " to " << end - 1 << endl;
+    printArray();
 
-    // Power
-    for (int i = start; i < end; i++) {
-        if (commandList[i] == POWER_COMMAND) {
-            shiftNumbers(operands(i, commandList[i]), i, end);
-            shiftCommands(commandList[i + 1], i, end);
-            end--;
-            i--;
+    int* pStart = &start;
+    int* pEnd = &end;
+    char commands[2] = {};
 
-            printArray(start, end);
-        }
-    }
+    commands[0] = POWER_COMMAND;
+    mathLoop(commands, pStart, pEnd, 1);
 
-    // Multiplication and division
-    for (int i = start; i < end; i++) {
-        if (commandList[i] == MULTIPLICATION_COMMAND || commandList[i] == DIVISION_COMMAND) {
-            shiftNumbers(operands(i, commandList[i]), i, end);
-            shiftCommands(commandList[i + 1], i, end);
-            end--;
-            i--;
+    commands[0] = MULTIPLICATION_COMMAND;
+    commands[1] = DIVISION_COMMAND;
+    mathLoop(commands, pStart, pEnd);
 
-            printArray(start, end);
-        }
-    }
+    commands[0] = ADDITION_COMMAND;
+    commands[1] = SUBTRACTION_COMMAND;
+    mathLoop(commands, pStart, pEnd);
 
-    // Addition and subtraction
-    for (int i = start; i < end; i++) {
-        if (commandList[i] == ADDITION_COMMAND || commandList[i] == SUBTRACTION_COMMAND) {
-            shiftNumbers(operands(i, commandList[i]), i, end);
-            shiftCommands(commandList[i + 1], i, end);
-            end--;
-            i--;
-
-            printArray(start, end);
-        }
-    }
 
     // Resets InputManager for next series of inputs
     commandCount = 0;
