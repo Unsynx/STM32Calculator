@@ -31,9 +31,8 @@ private:
 	void printCommands();
 	void saveNumber();
 	bool isCommand(char input);
-	template <typename T> 
-	void shiftArray(T startValue, T* ar, int start, int end);
 	void shiftNumbers(float startValue, int start, int end);
+	void shiftNumbers2(int start, int end);
 	void shiftCommands(char startValue, int start, int end);
 	float operands(char command, float a, float b);
 	void mathLoop(char* commands, int* start, int* end, int operCount = 2);

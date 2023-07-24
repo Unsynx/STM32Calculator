@@ -59,6 +59,12 @@ void InputManager::shiftNumbers(float startValue, int start, int end) {
     numbers[start] = startValue;
 };
 
+void InputManager::shiftNumbers2(int start, int end) {
+    for (int i = 0; i < end - start; i++) {
+        numbers[start + i] = numbers[start + i + 1];
+    }
+};
+
 void InputManager::shiftCommands(char startValue, int start, int end) {
     for (int i = 0; i < end - start; i++) {
         commandList[start + i] = commandList[start + i + 1];
@@ -95,8 +101,6 @@ float InputManager::operands(char command, float a, float b) {
     }
 }
 
-
-//  5+9+(11-5+7-9)=
 void InputManager::mathLoop(char* commands, int* start, int* end, int operCount) {
     const int rangeEnd = *end;
     for (int i = *start; i < *end; i++) {
@@ -130,8 +134,6 @@ void InputManager::mathLoop(char* commands, int* start, int* end, int operCount)
     }
 };
 
-
-
 float InputManager::solveEquation(int start, int end, bool initialCall) {
     if (initialCall) {
         end = commandCount;
@@ -164,33 +166,46 @@ float InputManager::solveEquation(int start, int end, bool initialCall) {
             startParenthesisCount--;
 
             if (startParenthesisCount == 0) {
-                // Plus one
                 int chunkLength = i - groupStart;
                 float value = solveEquation(groupStart + 1, i + 1, false);
 
-                // Clear stuff, and then shift over the rest of it
-                // remove parenthesis
-                cout << "Before format" << endl;
+                /*  
+                (5+2)*((14/7)+1)=
+                ((14/7)+1)*(5+2)=
+                */
+
+                // todo: figure out how to change the selected area of the parenthesis after it has been shifted.
+
+                cout << "Before format, chunkLength: " << chunkLength << endl;
                 printArray();
 
+                // Shift result over
                 for (int j = 0; j < chunkLength; j++) {
                     shiftNumbers(value, groupStart, i + 1);
                     shiftCommands(commandList[groupStart + 1], groupStart, i + 1);
                 }
 
-                cout << "After format" << endl;
+                cout << "First step complete"<< endl;
                 printArray();
+
+                if (!initialCall) {
+                    cout << "chunkLength: " << chunkLength << ", groupstart: " << groupStart << endl;
+                }
+
+                // Shift rest of equation over
+                for (int j = 0; j <= chunkLength; j++) {
+                    shiftNumbers2(groupStart + 1, sizeof(numbers) / sizeof(int));
+                    shiftCommands(commandList[groupStart + 2], groupStart + 1, sizeof(commandList));
+                }
+
+                cout << "Second step. After format" << endl;
+                printArray();
+
+                i = start;
+                groupStart = -1;
             }
         }
     }
-
-    /*
-    // Debug
-    cout << "End" << endl << endl;
-    commandCount = 0;
-    inputBufferIndex = 0;
-    return 0;
-    */
 
     cout << endl << "Calculations for " << start - 1 << " to " << end - 1 << endl;
     printArray();
@@ -215,8 +230,9 @@ float InputManager::solveEquation(int start, int end, bool initialCall) {
     commandCount = 0;
     inputBufferIndex = 0;
 
+
     answer = numbers[start];
-    cout << "Answer: " << answer << endl;
+    cout << "RECURSE DONE" << endl << "Answer: " << answer << endl << endl;
     return answer;
 }
 
