@@ -68,7 +68,11 @@ void InputManager::shiftCommands(char startValue, int start, int end) {
 
 void InputManager::printArray(int start, int end) {
     for (int i = start; i < end; i++) {
-        cout << numbers[i] << commandList[i] << flush;
+        cout << i << "\t" << flush;
+    }
+    cout << endl;
+    for (int i = start; i < end; i++) {
+        cout << numbers[i] << " " << commandList[i] << "\t" << flush;
     }
     cout << endl;
 }
@@ -93,70 +97,52 @@ float InputManager::operands(int i, char command) {
 float InputManager::solveEquation(int start, int end, bool initialCall) {
     if (initialCall) {
         end = commandCount;
+        cout << endl;
+        printArray(start, end);
     }
     else {
         // Pass in smaller array without numbers
-        cout << "recuse started" << endl;
+        cout << endl << endl;
+        printArray(start, end);
+        cout << "Parenthesis pair from " << start - 1 << " to " << end - 1 << endl;
     }
 
-    cout << endl;
-    printArray(start, end);
-    cout << "Start value: " << start << ", End value: " << end << endl;
-         
-    // Check for parenthesis
-    // Make sure this can identify both nested and sequential occurences.
-    int chunkStart = 0;
-    int chunkOffset = 0;
-    for (int i = start; i <= end; i++) {
+
+    int groupStart = -1;
+    int startParenthesisCount = 0;
+    for (int i = start; i < end; i++) {
         if (commandList[i] == PARENTHESIS_START) {
-            // Saves index of first parenthesis
-            if (chunkOffset == 0) {
-                chunkStart = i;
+            if (groupStart == -1) {
+                groupStart = i;
             }
-
-            chunkOffset++;
+            startParenthesisCount++;
+            cout << "Parenthesis start found at i: " << i << endl;
         }
-
-        // This will also run when there is just a floating end parenthesis
         if (commandList[i] == PARENTHESIS_END) {
-            chunkOffset--;
-
-            if (chunkOffset == 0) {
-                float value;
-                value = solveEquation(chunkStart + 1, i + 1, false);
-                cout << "Recursion returned: " << value << endl;
-                    
-                cout << endl;
-                cout << "Cleanup, chunkstart: " << chunkStart << endl;
-                printArray(start, end);
-
-                // todo: make cleanup work
-                shiftNumbers(value, chunkStart, i + 1);
-                shiftCommands(commandList[chunkStart+1], chunkStart, i + 1);
-                printArray(start, end);
-                shiftNumbers(value, chunkStart, i + 1);
-                shiftCommands(commandList[chunkStart+1], chunkStart, i + 1);
-                printArray(start, end);
-
-                // This changes the array, so the following recursions get confused
+            cout << "Parenthesis end found at i: " << i << endl;
+            startParenthesisCount--;
+            if (startParenthesisCount == 0) {
+                // Plus one
+                solveEquation(groupStart + 1, i + 1, false);
             }
         }
-
-        cout << "ChunkOffset: " << chunkOffset << endl;
-
     }
 
-    cout << endl;
-    cout << "Finished recursions" << endl;
-    cout << "Start value: " << start << ", End value: " << end << endl;
-    printArray(start, end);
+
+    // Debug
+    cout << "End" << endl << endl;
+    commandCount = 0;
+    inputBufferIndex = 0;
+    return 0;
+
+    cout << endl << "Calculations for " << start - 1 << " to " << end - 1 << endl;
 
     // Power
-    for (int i = start; i < end; i++) {     // not sure about  || i < end
+    for (int i = start; i < end; i++) {
         if (commandList[i] == POWER_COMMAND) {
             shiftNumbers(operands(i, commandList[i]), i, end);
             shiftCommands(commandList[i + 1], i, end);
-            end--;      // not sure
+            end--;
             i--;
 
             printArray(start, end);
@@ -164,11 +150,11 @@ float InputManager::solveEquation(int start, int end, bool initialCall) {
     }
 
     // Multiplication and division
-    for (int i = start; i < end; i++) {     // not sure about  || i < end
+    for (int i = start; i < end; i++) {
         if (commandList[i] == MULTIPLICATION_COMMAND || commandList[i] == DIVISION_COMMAND) {
             shiftNumbers(operands(i, commandList[i]), i, end);
             shiftCommands(commandList[i + 1], i, end);
-            end--;      // not sure
+            end--;
             i--;
 
             printArray(start, end);
@@ -192,7 +178,7 @@ float InputManager::solveEquation(int start, int end, bool initialCall) {
     inputBufferIndex = 0;
 
     answer = numbers[start];
-    cout << answer << endl;
+    cout << "Answer: " << answer << endl;
     return answer;
 }
 
