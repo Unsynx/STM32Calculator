@@ -87,7 +87,7 @@ float InputManager::operands(int i, char command) {
 }
 
 
-float InputManager::solveEquation(int start = 0, int end = 100) {
+float InputManager::solveEquation(int start, int end) {
     // Check for parenthesis
     // Make sure this can identify both nested and sequential occurences.
     int chunkStart = 0;
@@ -97,8 +97,8 @@ float InputManager::solveEquation(int start = 0, int end = 100) {
             chunkStart = i;
             chunkOffset++;
         }
-        if (commandList[i] == PARENTHESIS_START) {
-            if (chunkOffset == 0) {
+        if (commandList[i] == PARENTHESIS_END) {
+            if (chunkOffset == 0) {     // Since 0 is the deafult, this only runs when an end is found first
                 throw invalid_argument("Unpaired Parenthesis");
             }
             chunkOffset--;
@@ -141,6 +141,8 @@ float InputManager::solveEquation(int start = 0, int end = 100) {
         }
     }
 
+    commandCount = 0;
+    inputBufferIndex = 0;
     answer = numbers[0];
     return answer;
 }
@@ -153,7 +155,7 @@ char InputManager::getInput() {
     // With STM32, this will manage the button matrix
     char input;
     cin >> input;
-    cin.ignore(numeric_limits<std::streamsize>::max(), '\n');   // Only read first char https://stackoverflow.com/questions/5131647/why-would-we-call-cin-clear-and-cin-ignore-after-reading-input
+    //cin.ignore(numeric_limits<std::streamsize>::max(), '\n');   // Only read first char https://stackoverflow.com/questions/5131647/why-would-we-call-cin-clear-and-cin-ignore-after-reading-input
 
     return input;
 }

@@ -24,5 +24,6 @@ public:
 	void shiftRow(int row, int direction);
 	void writeLine(string line, int row, int align);
 	void writeCursor(char letter, bool shiftDisplayWhenFull);
+	void resetCursor() { cursorX = 0; };
 	void setChar(char letter, int row, int column);
 };

@@ -23,9 +23,15 @@ int main()
     inputManager.saveInput(input);
     
     // Main loop
+    bool clearDisplay = false;
     do {
         //system("cls");                      // clears screen
         display.updateDisplay();            // Pushes all updates from display class to console
+
+        if (clearDisplay) {
+            display.clearDisplay();
+            clearDisplay = false;
+        }
 
         input = inputManager.getInput();    // Waits until input is received
         inputManager.saveInput(input);      // Saves input to input buffer
@@ -40,6 +46,8 @@ int main()
             ss >> ans;
 
             display.writeLine(ans, 1, Display::ALIGN_RIGHT);
+            clearDisplay = true;
+            display.resetCursor();
         }
         else {
             display.writeCursor(input, true);
