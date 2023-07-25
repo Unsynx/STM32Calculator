@@ -53,8 +53,10 @@ float InputManager::operands(char command, float a, float b) {
 
 // Solves the equation saved in the input buffer
 float InputManager::solveEquation() {
+    stringstream ss;
     for (int i = 0; i < inputBufferIndex; i++) {
-        inputBuffer[i];
+
+        ss << inputBuffer[i];
     }
 
     inputBufferIndex = 0;
