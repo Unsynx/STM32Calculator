@@ -41,7 +41,7 @@ int main()
             case (InputManager::GENERIC_ERROR):
                 display.clearDisplay();
                 display.writeLine("ERROR", 0, Display::ALIGN_LEFT);
-                display.writeLine("Generic error", 0, Display::ALIGN_LEFT);
+                display.writeLine("This is what went wrong", 0, Display::ALIGN_LEFT);
                 inputManager.clearInputBuffer();
                 clearDisplay = true;
                 break;

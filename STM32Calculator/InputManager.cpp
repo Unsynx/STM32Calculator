@@ -15,7 +15,9 @@ char InputManager::getInput() {
     cout << SUBTRACTION_COMMAND << "\tSubtraction." << endl;
     cout << MULTIPLICATION_COMMAND << "\tMultiplication." << endl;
     cout << DIVISION_COMMAND << "\tDivision." << endl;
+    cout << PARENTHESIS_START << ", " << PARENTHESIS_END << "\tParenthesis." << endl;
     cout << EQUALS_COMMAND << "\tEvaluate Answer." << endl;
+    cout << CLEAR_COMMAND << "\tClear." << endl << endl;
     cout << EXIT_COMMAND << "\tExit." << endl << endl;
 
     // Input
@@ -123,9 +125,17 @@ void InputManager::math(vector<string> &queue, int startIndex, int endIndex) {
     mathLoop(queue, operands, startIndex, endIndex);
 }
 
-// Solves the equation saved in the input buffer
-float InputManager::solveEquation() {
-    vector<string> queue;
+
+void InputManager::addToQueue(vector<string>& queue, stringstream& ss) {
+    string s;
+    ss >> s;
+    queue.emplace_back(s);
+    ss.str("");
+    ss.clear();
+}
+
+int InputManager::parseInput() {
+    queue.clear();
 
     // Convert char array to string array with grouped numbers
     stringstream ss;
@@ -133,30 +143,36 @@ float InputManager::solveEquation() {
     for (int i = 0; i < inputBufferIndex; i++) {
         char c = inputBuffer[i];
         if (isCommand(c)) {
-            string s;
             if (!clearSS) {
+                addToQueue(queue, ss);
 
-                ss >> s;
-                queue.emplace_back(s);
-                ss.str("");
-                ss.clear();
+                // When no operator is place between a parenthesis and a number, it default to multiplying them.
+                if (c == PARENTHESIS_START) {
+                    ss << MULTIPLICATION_COMMAND;
+                    addToQueue(queue, ss);
+                }
             }
 
-            string s2;
             ss << c;
-            ss >> s2;
-            queue.emplace_back(s2);
-            ss.str("");
-            ss.clear();
-
+            addToQueue(queue, ss);
             clearSS = true;
+
+            // When no operator follows an ending parenthesis, default to multiplying them.
+            if (isCommand(c) && c == PARENTHESIS_END && !isCommand(inputBuffer[i + 1])) {
+                ss << MULTIPLICATION_COMMAND;
+                addToQueue(queue, ss);
+            }
         }
         else {
             ss << c;
             clearSS = false;
         }
     }
+    return 0;
+}
 
+// Solves the equation saved in the input buffer
+float InputManager::solveEquation() {
     int end = queue.size();
     int parenthesisStart = 0;
     for (int i = 0; i < end; i++) {
@@ -171,7 +187,7 @@ float InputManager::solveEquation() {
         }
     }
 
-    math(queue, 0, queue.size()-1);
+    math(queue, 0, queue.size() - 1);
 
     inputBufferIndex = 0;
     float output = stof(queue[0]);
