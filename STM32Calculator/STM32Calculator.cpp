@@ -36,16 +36,19 @@ int main()
         inputManager.saveInput(input);      // Saves input to input buffer
 
         if (input == InputManager::EQUALS_COMMAND) {
+            // Error handling
             switch (inputManager.parseInput())
-            {
-            case (InputManager::GENERIC_ERROR):
+            {  
+            case (InputManager::SYNTAX_ERROR):
                 display.clearDisplay();
                 display.writeLine("ERROR", 0, Display::ALIGN_LEFT);
-                display.writeLine("Generic error", 0, Display::ALIGN_LEFT);
+                display.writeLine("Syntax Error", 1, Display::ALIGN_LEFT);
                 inputManager.clearInputBuffer();
                 clearDisplay = true;
                 break;
+
             default:
+                // Calculate answer and display it
                 float answer = inputManager.solveEquation();
 
                 stringstream ss;

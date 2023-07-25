@@ -29,8 +29,7 @@ public:
 
 	static char const EXIT_COMMAND = 'e';  // for testing only
 
-	static int const GENERIC_ERROR = 1;
-
+	static int const SYNTAX_ERROR = 1;
 
 private:
 	void addToQueue(vector<string>& queue, stringstream& ss);

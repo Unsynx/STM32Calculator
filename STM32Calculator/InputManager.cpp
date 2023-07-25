@@ -152,6 +152,9 @@ int InputManager::parseInput() {
                     addToQueue(queue, ss);
                 }
             }
+            else {
+                return SYNTAX_ERROR;
+            }
 
             ss << c;
             addToQueue(queue, ss);
