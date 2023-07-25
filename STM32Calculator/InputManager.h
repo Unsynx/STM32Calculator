@@ -9,10 +9,6 @@ private:
 	char inputBuffer[100] = {};		//  List of all the numbers you input
 	int inputBufferIndex = 0;		//  How many places are filled
 
-	float numbers[100] = {};		//  Inputed numbers turned from chars to ints
-	char commandList[100] = {};		//  List of commands in the order applied
-	int commandCount = 0;			//  How many numbers are filled
-
 	float answer = 0;
 
 public:
@@ -28,20 +24,11 @@ public:
 	static char const EXIT_COMMAND = 'e';  // for testing only
 
 private:
-	void printCommands();
-	void saveNumber();
-	bool isCommand(char input);
-	void shiftNumbers(float startValue, int start, int end);
-	void shiftNumbers2(int start, int end);
-	void shiftCommands(char startValue, int start, int end);
 	float operands(char command, float a, float b);
-	void mathLoop(char* commands, int* start, int* end, int operCount = 2);
-	void printArray(int start = 0, int end = 10); // for debug
 
 public:
-	InputManager() {};
-	float solveEquation(int start = 0, int end = 0, bool initialCall = true);
-	char getInput();	// With STM32, this will manage the button matrix
+	float solveEquation();
+	char getInput();
 	void saveInput(char input);
 	float getAnswer() { return answer; }
 };
