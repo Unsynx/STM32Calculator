@@ -63,10 +63,15 @@ bool InputManager::isCommand(char input) {
     return true;
 }
 
-//
+// Do math and squish function
 void InputManager::mathLoop(vector<string> &queue, vector<char> operands, int startIndex, int endIndex) {
-    for (int i = startIndex; i < endIndex; i++) {
+    for (int i = startIndex; i < endIndex; i++) {  // i feel like this is the problem
         bool matchingCommand = false;
+
+        // Catch weird error
+        if (i == queue.size()) {
+            return;
+        }
 
         for (int j = 0; j < operands.size(); j++) {
             if (queue[i][0] == operands[j]) {
@@ -79,10 +84,16 @@ void InputManager::mathLoop(vector<string> &queue, vector<char> operands, int st
             float b = stof(queue[i + 1]);
             float value = this->operands(queue[i][0], a, b);
 
+            int sizeBefore = queue.size();
+
             // squashes down the equation to a single element
             queue[i - 1] = to_string(value);
             queue.erase(next(queue.begin(), i + 1));
             queue.erase(next(queue.begin(),  i));
+            queue.shrink_to_fit();
+
+            endIndex -= (sizeBefore - queue.size());
+            i = startIndex;
         }
     }
 }
@@ -139,7 +150,7 @@ float InputManager::solveEquation() {
         }
     }
 
-    math(queue, 0, queue.size()-2);
+    math(queue, 0, queue.size()-1);
 
     inputBufferIndex = 0;
     float output = stof(queue[0]);

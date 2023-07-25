@@ -72,8 +72,7 @@ int main() {
     Equation equations[] = {
         Equation("1+1=", 2),
         Equation("7-5+1=", 3),
-        Equation("12*2/3=", 8)
-        /*
+        Equation("12*2/3=", 8),
         Equation("4-5*2=", -6),
         Equation("1.2-0.9=", 0.3),
         Equation("5.2*7=", 36.4),
@@ -83,7 +82,6 @@ int main() {
         Equation("1+(6-2)+(9+2)=", 16),
         Equation("(6+1)*4=", 28),
         Equation("(5+7)*((16-11)-(2^2))=", 12)
-        */
     };
 
     InputManager inputManager;
