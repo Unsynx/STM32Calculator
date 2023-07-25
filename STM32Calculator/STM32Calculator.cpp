@@ -81,7 +81,8 @@ int main() {
         Equation("5*((5-1)/5)=", 4),
         Equation("1+(6-2)+(9+2)=", 16),
         Equation("(6+1)*4=", 28),
-        Equation("(5+7)*((16-11)-(2^2))=", 12)
+        Equation("(5+7)*((16-11)-(2^2))=", 12),
+        Equation("10^(5-2)*(0.9)=", 900)
     };
 
     InputManager inputManager;

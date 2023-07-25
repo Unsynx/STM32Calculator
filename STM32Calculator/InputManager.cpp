@@ -102,6 +102,13 @@ void InputManager::mathLoop(vector<string> &queue, vector<char> operands, int st
 void InputManager::math(vector<string> &queue, int startIndex, int endIndex) {
     vector<char> operands;
 
+    if (queue[startIndex][0] == PARENTHESIS_START) {
+        queue.erase(next(queue.begin(), endIndex));
+        queue.erase(next(queue.begin(), startIndex));
+        queue.shrink_to_fit();
+        endIndex -= 2;
+    }
+
     operands.emplace_back(POWER_COMMAND);
     mathLoop(queue, operands, startIndex, endIndex);
 
@@ -147,6 +154,20 @@ float InputManager::solveEquation() {
         else {
             ss << c;
             clearSS = false;
+        }
+    }
+
+    int end = queue.size();
+    int parenthesisStart = 0;
+    for (int i = 0; i < end; i++) {
+        if (queue[i][0] == PARENTHESIS_START) {
+            parenthesisStart = i;
+        }
+        if (queue[i][0] == PARENTHESIS_END) {
+            math(queue, parenthesisStart, i);
+            i = 0;
+            parenthesisStart = 0;
+            end = queue.size();
         }
     }
 
