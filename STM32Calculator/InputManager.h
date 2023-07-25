@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -25,6 +26,8 @@ public:
 
 private:
 	float operands(char command, float a, float b);
+	bool isCommand(char input);
+	float mathLoop(vector<string> *ar, int startIndex, int endIndex);
 
 public:
 	float solveEquation();

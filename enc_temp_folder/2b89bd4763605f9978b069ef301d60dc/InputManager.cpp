@@ -105,7 +105,6 @@ float InputManager::solveEquation() {
     }
 
 
-    
 
 
     inputBufferIndex = 0;
