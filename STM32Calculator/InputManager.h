@@ -27,8 +27,8 @@ public:
 private:
 	float operands(char command, float a, float b);
 	bool isCommand(char input);
-	float mathLoop(vector<string> *ar, int startIndex, int endIndex);
-
+	void mathLoop(vector<string> &queue, vector<char> operands, int startIndex, int endIndex);
+	void math(vector<string> &queue, int startIndex, int endIndex);
 public:
 	float solveEquation();
 	char getInput();

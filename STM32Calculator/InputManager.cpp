@@ -63,51 +63,85 @@ bool InputManager::isCommand(char input) {
     return true;
 }
 
-float InputManager::mathLoop(vector<string> *ar, int startIndex, int endIndex) {
-    return 1.0;
+//
+void InputManager::mathLoop(vector<string> &queue, vector<char> operands, int startIndex, int endIndex) {
+    for (int i = startIndex; i < endIndex; i++) {
+        bool matchingCommand = false;
+
+        for (int j = 0; j < operands.size(); j++) {
+            if (queue[i][0] == operands[j]) {
+                matchingCommand = true;
+            }
+        }
+
+        if (matchingCommand) {
+            float a = stof(queue[i - 1]);
+            float b = stof(queue[i + 1]);
+            float value = this->operands(queue[i][0], a, b);
+
+            // squashes down the equation to a single element
+            queue[i - 1] = to_string(value);
+            queue.erase(next(queue.begin(), i + 1));
+            queue.erase(next(queue.begin(),  i));
+        }
+    }
 }
 
+// Runs mathLoop for each set of operands.
+void InputManager::math(vector<string> &queue, int startIndex, int endIndex) {
+    vector<char> operands;
+
+    operands.emplace_back(POWER_COMMAND);
+    mathLoop(queue, operands, startIndex, endIndex);
+
+    operands.clear();
+    operands.emplace_back(MULTIPLICATION_COMMAND);
+    operands.emplace_back(DIVISION_COMMAND);
+    mathLoop(queue, operands, startIndex, endIndex);
+
+    operands.clear();
+    operands.emplace_back(ADDITION_COMMAND);
+    operands.emplace_back(SUBTRACTION_COMMAND);
+    mathLoop(queue, operands, startIndex, endIndex);
+}
 
 // Solves the equation saved in the input buffer
 float InputManager::solveEquation() {
     vector<string> queue;
 
     // Convert char array to string array with grouped numbers
-    {
-        stringstream ss;
-        bool clearSS = true;
-        for (int i = 0; i < inputBufferIndex; i++) {
-            char c = inputBuffer[i];
-            if (isCommand(c)) {
-                string s;
-                if (!clearSS) {
+    stringstream ss;
+    bool clearSS = true;
+    for (int i = 0; i < inputBufferIndex; i++) {
+        char c = inputBuffer[i];
+        if (isCommand(c)) {
+            string s;
+            if (!clearSS) {
 
-                    ss >> s;
-                    queue.emplace_back(s);
-                    ss.str("");
-                    ss.clear();
-                }
-
-                string s2;
-                ss << c;
-                ss >> s2;
-                queue.emplace_back(s2);
+                ss >> s;
+                queue.emplace_back(s);
                 ss.str("");
                 ss.clear();
+            }
 
-                clearSS = true;
-            }
-            else {
-                ss << c;
-                clearSS = false;
-            }
+            string s2;
+            ss << c;
+            ss >> s2;
+            queue.emplace_back(s2);
+            ss.str("");
+            ss.clear();
+
+            clearSS = true;
+        }
+        else {
+            ss << c;
+            clearSS = false;
         }
     }
 
-
-    
-
+    math(queue, 0, queue.size()-2);
 
     inputBufferIndex = 0;
-    return stof(queue[0]);
+    float output = stof(queue[0]);
+    return output;
 }
