@@ -15,6 +15,7 @@ char InputManager::getInput() {
     cout << SUBTRACTION_COMMAND << "\tSubtraction." << endl;
     cout << MULTIPLICATION_COMMAND << "\tMultiplication." << endl;
     cout << DIVISION_COMMAND << "\tDivision." << endl;
+    cout << POWER_COMMAND << "\tExponent." << endl;
     cout << PARENTHESIS_START << ", " << PARENTHESIS_END << "\tParenthesis." << endl;
     cout << EQUALS_COMMAND << "\tEvaluate Answer." << endl;
     cout << CLEAR_COMMAND << "\tClear." << endl << endl;
