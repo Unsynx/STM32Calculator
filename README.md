@@ -1,2 +1,2 @@
 # STM32Calculator
-![Cool banner]("Images/STM32 Graphic.png")
+<img src="Images/STM32 Graphic.png" width="1600" height="800">
