@@ -153,7 +153,12 @@ int InputManager::parseInput() {
                 }
             }
             else {
-                return SYNTAX_ERROR;
+                // Syntax error, but it catches things that are fine as well
+                if (c != PARENTHESIS_START && c != PARENTHESIS_END) {
+                    if (inputBuffer[i - 1] != PARENTHESIS_START && inputBuffer[i - 1] != PARENTHESIS_END) {
+                        return SYNTAX_ERROR;
+                    }
+                }
             }
 
             ss << c;
@@ -161,7 +166,7 @@ int InputManager::parseInput() {
             clearSS = true;
 
             // When no operator follows an ending parenthesis, default to multiplying them.
-            if (isCommand(c) && c == PARENTHESIS_END && !isCommand(inputBuffer[i + 1])) {
+            if (c == PARENTHESIS_END && !isCommand(inputBuffer[i + 1]) && inputBuffer[i + 1] != PARENTHESIS_END) {
                 ss << MULTIPLICATION_COMMAND;
                 addToQueue(queue, ss);
             }

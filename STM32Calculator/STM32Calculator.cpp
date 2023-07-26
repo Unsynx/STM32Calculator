@@ -14,16 +14,16 @@ int main()
 {
     Display display;
     InputManager inputManager;
-    char input;
 
     // Intro screen
     display.writeLine("Hello. world!", 0, Display::ALIGN_LEFT);
 
     bool clearDisplay = true;
+    char input;
     
     // Main loop
     do {
-        system("cls");                      // clears screen
+        //system("cls");                      // clears screen
         display.updateDisplay();            // Pushes all updates from display class to console
 
         // Clears display after 
@@ -75,8 +75,8 @@ int main()
 }
 
 
-/*
 
+/*
 class Equation {
 public:
     string equation;
@@ -102,7 +102,7 @@ int main() {
         Equation("1+(6-2)+(9+2)=", 16),
         Equation("(6+1)*4=", 28),
         Equation("(5+7)*((16-11)-(2^2))=", 12),
-        Equation("10^(5-2)*(0.9)=", 900)
+        Equation("10^(5-2)*(0.9)=", 900),
     };
 
     InputManager inputManager;
@@ -116,6 +116,11 @@ int main() {
             inputManager.saveInput(equations[i].equation[j]);
         }
 
+        if (inputManager.parseInput() != 0) {
+            inputManager.clearInputBuffer();
+            continue;
+        }
+        
         float answer = inputManager.solveEquation();
         bool pass = equations[i].pass(answer);
 
